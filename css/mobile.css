@@ -1,7 +1,8 @@
 /* ============================================
-   移动端音乐播放器界面 - 美学增强完整版 v2
-   - 彻底修复封面/按钮椭圆变形（强制正圆）
-   - 精致毛玻璃、渐变光影、流畅动效
+   移动端音乐播放器界面 - 美学增强完整版 v3
+   - 100% 强制正圆封面 + 旋转动画
+   - 100% 强制正圆所有按钮，彻底修复椭圆变形
+   - 超精致毛玻璃、渐变光影、流畅动效
    - 保留所有原始类名与JS交互兼容性
    ============================================ */
 
@@ -66,7 +67,7 @@ body.mobile-view .container {
     width: 100%;
     max-width: 420px;
     background: linear-gradient(145deg, rgba(24, 28, 38, 0.86), rgba(8, 10, 16, 0.94));
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(20px);
     border-radius: 48px;
     padding: clamp(16px, 5vw, 28px);
     padding-top: calc(env(safe-area-inset-top) + clamp(18px, 6vw, 32px));
@@ -78,7 +79,7 @@ body.mobile-view .container {
     position: relative;
     overflow: visible;
     flex: 1 1 auto;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* 顶部光泽反射层 */
@@ -103,7 +104,7 @@ body.mobile-view .mobile-toolbar {
 
 body.mobile-view .mobile-toolbar__title {
     font-size: 1.08rem;
-    font-weight: 590;
+    font-weight: 600;
     letter-spacing: 0.02em;
     background: linear-gradient(135deg, #ffffff, #e0e4f0);
     background-clip: text;
@@ -112,28 +113,25 @@ body.mobile-view .mobile-toolbar__title {
     text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-/* 工具栏按钮：完美圆形修复 */
+/* 工具栏按钮：完美正圆 */
 body.mobile-view .mobile-toolbar__button {
     width: 42px;
     height: 42px;
-    min-width: 42px;
-    min-height: 42px;
     border-radius: 50%;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
     flex-shrink: 0;
-    background: rgba(40, 44, 58, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(40, 44, 58, 0.7);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
 body.mobile-view .mobile-toolbar__button i {
     font-size: 1.1rem;
     line-height: 1;
-    pointer-events: none;
 }
 
 body.mobile-view .mobile-toolbar__button:active {
@@ -142,15 +140,16 @@ body.mobile-view .mobile-toolbar__button:active {
     border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* ---------- 转盘区域 (黑胶质感 + 强制正圆修复) ---------- */
+/* ---------- 转盘区域 (黑胶质感 + 绝对正圆) ---------- */
 body.mobile-view .mobile-turntable {
     margin-bottom: 0;
     position: relative;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
-/* 修复转盘底板强制正圆：宽高使用相同clamp值，替代aspect-ratio以确保绝对圆形 */
+/* 转盘底板：强制正圆 */
 body.mobile-view .mobile-turntable__platter {
     width: min(78vw, 320px);
     height: min(78vw, 320px);
@@ -173,7 +172,7 @@ body.mobile-view .mobile-turntable__platter::before {
     position: absolute;
     inset: 6%;
     border-radius: 50%;
-    background: 
+    background:
         repeating-conic-gradient(from 0deg, rgba(255,255,240,0.08) 0deg 2deg, transparent 2deg 8deg),
         radial-gradient(circle at 48% 48%, rgba(255,245,210,0.1) 0%, transparent 55%);
     opacity: 0.5;
@@ -189,32 +188,39 @@ body.mobile-view .mobile-turntable__platter::after {
     pointer-events: none;
 }
 
-/* 专辑封面：强制正圆修复 - 宽高相等，严格1:1比例 */
+/* ==========================================
+   专辑封面：彻底修复椭圆 → 强制1:1正圆 + 旋转
+   ========================================== */
 body.mobile-view .album-cover {
     position: absolute;
-    top: 50%;
-    left: 50%;
     width: 58%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    transform: translate(-50%, -50%);
+    height: 58%;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 0 0 0 2px rgba(255, 255, 255, 0.2);
-    transition: transform 0.25s ease;
     background: #10131c;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
 }
 
 body.mobile-view .album-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    object-position: center;
 }
 
-body.mobile-view.is-playing .album-cover img {
-    transform: scale(1.02);
+/* 播放时封面旋转 */
+body.mobile-view.is-playing .album-cover {
+    animation: cover-rotate 20s linear infinite;
+}
+
+@keyframes cover-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* 播放状态转盘动画 */
@@ -256,19 +262,23 @@ body.mobile-view .mobile-inline-lyrics__content .current {
 
 /* ---------- 歌曲信息区域 ---------- */
 body.mobile-view .current-song-title {
-    font-size: clamp(1.1rem, 5.5vw, 1.4rem);
-    font-weight: 640;
+    font-size: clamp(1.2rem, 5.5vw, 1.5rem);
+    font-weight: 650;
     background: linear-gradient(135deg, #fff, #ddd8f0);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
     letter-spacing: -0.2px;
+    text-align: center;
+    margin: 0;
 }
 
 body.mobile-view .current-song-artist {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 245, 0.65);
+    font-size: 1rem;
+    color: rgba(255, 255, 245, 0.7);
     font-weight: 450;
+    text-align: center;
+    margin: 4px 0 0;
 }
 
 /* 音质芯片 */
@@ -280,6 +290,9 @@ body.mobile-view .mobile-quality-chip {
     border: 1px solid rgba(255, 255, 255, 0.15);
     font-weight: 500;
     transition: all 0.2s;
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 body.mobile-view .mobile-quality-chip.active {
@@ -290,58 +303,82 @@ body.mobile-view .mobile-quality-chip.active {
 }
 
 /* ---------- 进度条 (现代风格) ---------- */
+body.mobile-view .progress-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    row-gap: 8px;
+    column-gap: 10px;
+    align-items: center;
+}
+
 body.mobile-view .progress-container input[type="range"] {
+    grid-column: 1 / span 3;
+    grid-row: 1;
+    width: 100%;
     background: linear-gradient(to right,
         #ffa36b 0%,
         #ffa36b var(--progress, 0%),
         rgba(255, 255, 255, 0.2) var(--progress, 0%),
         rgba(255, 255, 255, 0.2) 100%);
-    height: 5px;
+    height: 6px;
     border-radius: 10px;
     cursor: pointer;
+    appearance: none;
+    outline: none;
 }
 
 body.mobile-view .progress-container input[type="range"]::-webkit-slider-thumb {
-    width: 14px;
-    height: 14px;
+    appearance: none;
+    width: 16px;
+    height: 16px;
     background: #ffbc7a;
-    box-shadow: 0 0 8px #ff9f4a;
+    box-shadow: 0 0 12px #ff9f4a;
     border: 2px solid white;
-    transform: scale(1);
+    border-radius: 50%;
     transition: 0.1s;
+    cursor: pointer;
 }
 
 body.mobile-view .progress-container input[type="range"]:active::-webkit-slider-thumb {
     transform: scale(1.3);
 }
 
-/* ---------- 播放控制按钮 (精致悬浮感 + 完美圆形修复) ---------- */
-/* 所有圆形按钮统一使用宽高相等、flex居中、防止变形 */
+body.mobile-view .progress-container span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+/* ---------- 播放控制按钮 (全部强制正圆 + 精致悬浮感) ---------- */
+body.mobile-view .transport-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(12px, 5vw, 18px);
+}
+
+/* 通用控制按钮：正圆 */
 body.mobile-view .transport-button {
-    width: clamp(46px, 14vw, 54px);
-    height: clamp(46px, 14vw, 54px);
-    min-width: 44px;
-    min-height: 44px;
+    width: clamp(48px, 14vw, 56px);
+    height: clamp(48px, 14vw, 56px);
     border-radius: 50%;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    box-sizing: border-box;
-    background: rgba(32, 36, 48, 0.75);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(32, 36, 48, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     flex-shrink: 0;
 }
 
 body.mobile-view .transport-button i {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     line-height: 1;
-    display: inline-block;
-    vertical-align: middle;
-    pointer-events: none;
 }
 
 body.mobile-view .transport-button:active {
@@ -349,25 +386,24 @@ body.mobile-view .transport-button:active {
     background: rgba(70, 80, 105, 0.8);
 }
 
-/* 主播放按钮：严格正圆，尺寸固定比例，加柔光效果 */
+/* 主播放按钮：超大正圆 + 渐变光影 */
 body.mobile-view .transport-button--play {
-    width: clamp(60px, 18vw, 70px);
-    height: clamp(60px, 18vw, 70px);
-    min-width: 56px;
-    min-height: 56px;
+    width: clamp(64px, 18vw, 74px);
+    height: clamp(64px, 18vw, 74px);
     border-radius: 50%;
     background: linear-gradient(135deg, #ff7b4a, #ffaa5e);
     box-shadow: 0 12px 28px rgba(255, 100, 50, 0.45);
     border: none;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
 body.mobile-view .transport-button--play i {
-    font-size: 1.8rem;
+    font-size: 2rem;
     line-height: 1;
+    color: #fff;
 }
 
 body.mobile-view .transport-button--play:active {
@@ -375,18 +411,18 @@ body.mobile-view .transport-button--play:active {
     box-shadow: 0 6px 16px rgba(255, 100, 50, 0.6);
 }
 
-/* 模式切换按钮等其他圆形控件保持统一正圆 */
+/* 播放模式按钮：正圆 */
 body.mobile-view .play-mode-btn {
     width: 46px;
     height: 46px;
-    min-width: 46px;
-    min-height: 46px;
     border-radius: 50%;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-right: 0;
+    background: rgba(32, 36, 48, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ---------- 底部面板 (高级毛玻璃) ---------- */
@@ -430,15 +466,13 @@ body.mobile-view .mobile-panel-handle:active {
     width: 72px;
 }
 
-/* 面板内按钮圆形修复 */
+/* 面板内按钮：正圆 */
 body.mobile-view .mobile-panel-action-btn,
 body.mobile-view .mobile-close-btn {
     width: 38px;
     height: 38px;
-    min-width: 38px;
-    min-height: 38px;
     border-radius: 50%;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
@@ -452,7 +486,6 @@ body.mobile-view .mobile-panel-action-btn i,
 body.mobile-view .mobile-close-btn i {
     font-size: 1rem;
     line-height: 1;
-    pointer-events: none;
 }
 
 body.mobile-view .mobile-panel-action-btn:active,
@@ -468,16 +501,18 @@ body.mobile-view .playlist-items .playlist-item {
     transition: all 0.2s;
     backdrop-filter: blur(2px);
     position: relative;
-    padding: 12px 108px 12px 18px;
+    padding: 14px 110px 14px 20px;
     white-space: normal;
-    line-height: 1.35;
-    margin-bottom: 4px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    border: 1px solid transparent;
 }
 
 body.mobile-view .playlist-items .playlist-item.current,
 body.mobile-view .playlist-items .playlist-item:active {
     background: linear-gradient(95deg, rgba(255, 140, 70, 0.3), rgba(255, 180, 90, 0.15));
     transform: translateX(4px);
+    border-color: rgba(255, 165, 80, 0.2);
 }
 
 /* 滚动条精致化 */
@@ -535,10 +570,11 @@ body.mobile-view .search-container {
 body.mobile-view .search-input {
     background: rgba(10, 12, 20, 0.7);
     border-radius: 40px;
-    padding: 12px 18px;
+    padding: 14px 20px;
     font-size: 1rem;
     color: white;
     border: 1px solid rgba(255,255,255,0.15);
+    outline: none;
 }
 
 body.mobile-view .search-input::placeholder {
@@ -552,11 +588,13 @@ body.mobile-view .search-btn {
     letter-spacing: 0.5px;
     transition: all 0.2s;
     border-radius: 40px;
-    padding: 12px 18px;
-    display: inline-flex;
+    padding: 14px 20px;
+    display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
+    color: #fff;
+    font-size: 1rem;
 }
 
 body.mobile-view .search-btn:active {
@@ -573,7 +611,7 @@ body.mobile-view #notification {
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(20px);
     border-radius: 60px;
-    padding: 12px 20px;
+    padding: 12px 24px;
     color: white;
     font-weight: 500;
     border: 1px solid rgba(255, 160, 100, 0.4);
@@ -662,30 +700,6 @@ body.mobile-view .controls {
     align-items: stretch;
     margin-top: auto;
 }
-body.mobile-view .progress-container {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    row-gap: 8px;
-    column-gap: 10px;
-    align-items: center;
-}
-body.mobile-view .progress-container input[type="range"] {
-    grid-column: 1 / span 3;
-    grid-row: 1;
-    width: 100%;
-}
-body.mobile-view .progress-container span {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
-}
-body.mobile-view .transport-controls {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: clamp(12px, 5vw, 18px);
-}
 body.mobile-view .player-quality-btn {
     display: none;
 }
@@ -738,61 +752,18 @@ body.mobile-view .import-selected-btn {
     justify-content: center;
 }
 
-/* ========== 新增美学增强：播放按钮光晕动画 ========== */
+/* ========== 播放按钮光晕动画 ========== */
 @keyframes gentle-pulse {
-    0% {
-        box-shadow: 0 12px 28px rgba(255, 100, 50, 0.45);
-    }
-    50% {
-        box-shadow: 0 12px 32px rgba(255, 100, 50, 0.7), 0 0 0 4px rgba(255, 100, 50, 0.2);
-    }
-    100% {
-        box-shadow: 0 12px 28px rgba(255, 100, 50, 0.45);
-    }
+    0% { box-shadow: 0 12px 28px rgba(255, 100, 50, 0.45); }
+    50% { box-shadow: 0 12px 32px rgba(255, 100, 50, 0.7), 0 0 0 4px rgba(255, 100, 50, 0.2); }
+    100% { box-shadow: 0 12px 28px rgba(255, 100, 50, 0.45); }
 }
 
 body.mobile-view.is-playing .transport-button--play {
     animation: gentle-pulse 1.8s infinite ease-in-out;
 }
 
-/* 唱片高光增强，模拟真实黑胶旋转光晕 */
-body.mobile-view .mobile-turntable__platter {
-    position: relative;
-}
-body.mobile-view .mobile-turntable__platter::before {
-    background: 
-        repeating-conic-gradient(from 0deg, rgba(255,240,200,0.12) 0deg 2deg, transparent 2deg 8deg),
-        radial-gradient(circle at 35% 35%, rgba(255,220,150,0.2) 0%, transparent 60%);
-    transition: opacity 0.3s;
-}
-body.mobile-view.is-playing .mobile-turntable__platter::before {
-    opacity: 0.8;
-}
-
-/* 进度条拖拽增强 */
-body.mobile-view .progress-container input[type="range"]::-webkit-slider-thumb {
-    width: 16px;
-    height: 16px;
-    background: #ffbc7a;
-    box-shadow: 0 0 12px #ff9f4a;
-    border: 2px solid white;
-    transition: 0.1s;
-    cursor: pointer;
-}
-
-/* 确保所有圆形控件的图标垂直居中（修复小尺寸下偏移） */
-body.mobile-view .transport-button i,
-body.mobile-view .mobile-toolbar__button i,
-body.mobile-view .mobile-panel-action-btn i,
-body.mobile-view .mobile-close-btn i,
-body.mobile-view .play-mode-btn i {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    vertical-align: middle;
-}
-
-/* 触摸反馈优化，提升交互愉悦感 */
+/* 触摸反馈优化 */
 body.mobile-view .transport-button,
 body.mobile-view .mobile-toolbar__button,
 body.mobile-view .mobile-panel-action-btn {
